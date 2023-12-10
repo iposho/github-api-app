@@ -57,7 +57,7 @@ const Home: React.FC = () => {
           variant="contained"
           onClick={handleButtonClick}
           type="button"
-          disabled={username.length < 3}
+          disabled={!username.length}
         >
           Get It!
         </Button>

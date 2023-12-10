@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => (
       width: '100%',
       minHeight: '100vh',
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'start',
       alignItems: 'center',
       flexDirection: 'column',
     }}

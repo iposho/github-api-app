@@ -11,8 +11,8 @@ function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/repositories/:username/:repoName" element={<RepositoryDetails />} />
-        <Route path="/starred/:username" element={<StarredRepos />} />
+        <Route path="/:username/:repoName" element={<RepositoryDetails />} />
+        <Route path="/:username/starred" element={<StarredRepos />} />
         <Route path="/:username" element={<UserProfile />} />
         <Route path="/" element={<Home />} />
       </Routes>

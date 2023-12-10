@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
+  Alert,
+  AlertTitle,
   Avatar,
   Box,
   Card,
@@ -9,115 +11,122 @@ import {
   Typography,
 } from '@mui/material';
 
-import { IStarredRepos } from '../models/models';
+import { useGetStarredReposQuery } from '../store/api/githubApi';
+
+import { IStarredRepo } from '../models/models';
 
 const RepositoryList: React.FC = () => {
   const { username } = useParams();
-  const [starredRepos, setStarredRepos] = useState<IStarredRepos[] | null>(null);
-
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${username}/starred?per_page=10`)
-      .then((response) => response.json())
-      .then((data) => setStarredRepos(data))
-      .catch((error) => console.error('Error fetching user data', error));
-  }, [username]);
-
-  console.log(starredRepos);
+  const { data, isError, isLoading } = useGetStarredReposQuery(username!);
 
   return (
     <>
       {
-        starredRepos
-          ? (
-            <>
-              <Box
+        isError
+        && (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Something went wrong
+          </Alert>
+        )
+      }
+      {
+        isLoading && <CircularProgress size={60} />
+      }
+      {
+        data
+        && (
+          <>
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '768px',
+                marginTop: '1rem',
+              }}
+            >
+              <Typography
+                variant="h4"
+                component="h1"
                 sx={{
-                  width: '100%',
-                  maxWidth: '768px',
-                  marginTop: '1rem',
+                  textAlign: 'center',
                 }}
               >
-                <Typography
-                  variant="h4"
-                  component="h1"
-                  sx={{
-                    textAlign: 'center',
-                  }}
-                >
-                  Starred repositories by
-                  {' '}
+                Starred repositories by
+                {' '}
+                <Link to={`/${username}`}>
                   {username}
-                </Typography>
-              </Box>
-              <ul
-                style={{
-                  listStyleType: 'none',
-                  padding: 0,
-                  width: '100%',
-                  maxWidth: '768px',
-                }}
-              >
-                {starredRepos.map((repo) => (
-                  <li
-                    style={{
-                      marginBottom: '1rem',
+                </Link>
+              </Typography>
+            </Box>
+            <ul
+              style={{
+                listStyleType: 'none',
+                padding: 0,
+                width: '100%',
+                maxWidth: '768px',
+              }}
+            >
+              {data.map((repo: IStarredRepo) => (
+                <li
+                  style={{
+                    marginBottom: '1rem',
+                    width: '100%',
+                  }}
+                  key={repo.id}
+                >
+                  <Card
+                    sx={{
                       width: '100%',
+                      padding: '15px',
                     }}
-                    key={repo.id}
                   >
-                    <Card
+                    <Box
                       sx={{
-                        width: '100%',
-                        padding: '15px',
+                        display: 'flex',
+                        flexDirection: 'column',
                       }}
                     >
-                      <Box
+                      <Link
+                        style={{ fontSize: '1.5rem' }}
+                        to={`/${repo.full_name}`}
+                      >
+                        {repo.name}
+                      </Link>
+                      <Typography
                         sx={{
+                          width: '100%',
+                          marginBottom: '1rem',
+                        }}
+                        color="text.secondary"
+                      >
+                        {repo.description}
+                      </Typography>
+                      <Link
+                        to={`/${repo.owner.login}`}
+                        style={{
                           display: 'flex',
-                          flexDirection: 'column',
+                          alignItems: 'center',
                         }}
                       >
-                        <Link
-                          to={`/repositories/${repo.owner.login}/${repo.name}`}
-                        >
-                          {repo.name}
-                        </Link>
-                        <Typography
+                        <Avatar
                           sx={{
-                            width: '100%',
-                            marginBottom: '1rem',
+                            boxShadow: '8px 8px 45px -15px rgba(153,153,153,1)',
+                            width: '1rem',
+                            height: '1rem',
+                            marginRight: '.5rem',
                           }}
-                          color="text.secondary"
-                        >
-                          {repo.description}
-                        </Typography>
-                        <Link
-                          to={`/${repo.owner.login}`}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Avatar
-                            sx={{
-                              boxShadow: '8px 8px 45px -15px rgba(153,153,153,1)',
-                              width: '1rem',
-                              height: '1rem',
-                              marginRight: '.5rem',
-                            }}
-                            src={repo.owner.avatar_url}
-                            alt={`${repo.owner.login}'s avatar`}
-                          />
-                          {repo.owner.login}
-                        </Link>
-                      </Box>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )
-          : <CircularProgress />
+                          src={repo.owner.avatar_url}
+                          alt={`${repo.owner.login}'s avatar`}
+                        />
+                        {repo.owner.login}
+                      </Link>
+                    </Box>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
       }
     </>
   );
