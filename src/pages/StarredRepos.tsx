@@ -17,7 +17,7 @@ import { useGetStarredReposQuery } from '../store/api/githubApi';
 
 import { IStarredRepo } from '../models/models';
 
-const RepositoryList: React.FC = () => {
+const StarredRepos: React.FC = () => {
   const [page, setPage] = useState(1);
   const { username } = useParams();
   const {
@@ -157,4 +157,4 @@ const RepositoryList: React.FC = () => {
   );
 };
 
-export default RepositoryList;
+export default StarredRepos;
