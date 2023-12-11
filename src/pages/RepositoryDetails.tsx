@@ -70,6 +70,15 @@ const RepositoryDetails: React.FC = () => {
               >
                 {data.name}
               </Typography>
+              <Typography
+                sx={{
+                  width: '100%',
+                  textAlign: 'center',
+                }}
+                color="text.secondary"
+              >
+                {data.description}
+              </Typography>
               <Link
                 to={`/${data.owner.login}`}
                 style={{
@@ -91,16 +100,6 @@ const RepositoryDetails: React.FC = () => {
                 />
                 {data.owner.login}
               </Link>
-              <Typography
-                sx={{
-                  width: '100%',
-                  marginBottom: '1rem',
-                  textAlign: 'center',
-                }}
-                color="text.secondary"
-              >
-                {data.description}
-              </Typography>
             </Box>
             <Branches repoName={repoFullName} />
           </>

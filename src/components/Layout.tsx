@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 
 import {
   Container,
+  CssBaseline,
 } from '@mui/material';
 
 interface LayoutProps {
@@ -9,18 +10,21 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => (
-  <Container
-    sx={{
-      width: '100%',
-      minHeight: '100vh',
-      display: 'flex',
-      justifyContent: 'start',
-      alignItems: 'center',
-      flexDirection: 'column',
-    }}
-  >
-    {children}
-  </Container>
+  <>
+    <CssBaseline />
+    <Container
+      sx={{
+        width: '100%',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'start',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      {children}
+    </Container>
+  </>
 );
 
 export default Layout;
