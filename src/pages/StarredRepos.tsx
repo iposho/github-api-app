@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
@@ -8,6 +8,8 @@ import {
   Box,
   Card,
   CircularProgress,
+  Pagination,
+  Stack,
   Typography,
 } from '@mui/material';
 
@@ -16,8 +18,18 @@ import { useGetStarredReposQuery } from '../store/api/githubApi';
 import { IStarredRepo } from '../models/models';
 
 const RepositoryList: React.FC = () => {
+  const [page, setPage] = useState(1);
   const { username } = useParams();
-  const { data, isError, isLoading } = useGetStarredReposQuery(username!);
+  const {
+    data, isError, isLoading,
+  } = useGetStarredReposQuery({ username: username!, page });
+
+  const links = data?.links;
+  const lastPage = links?.last || page;
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   return (
     <>
@@ -34,8 +46,7 @@ const RepositoryList: React.FC = () => {
         isLoading && <CircularProgress size={60} />
       }
       {
-        data
-        && (
+        data && (
           <>
             <Box
               sx={{
@@ -58,6 +69,13 @@ const RepositoryList: React.FC = () => {
                 </Link>
               </Typography>
             </Box>
+            <Stack spacing={2} sx={{ margin: '1rem 0' }}>
+              <Pagination
+                count={lastPage}
+                page={page}
+                onChange={handlePageChange}
+              />
+            </Stack>
             <ul
               style={{
                 listStyleType: 'none',
@@ -66,7 +84,7 @@ const RepositoryList: React.FC = () => {
                 maxWidth: '768px',
               }}
             >
-              {data.map((repo: IStarredRepo) => (
+              {data?.repos.map((repo: IStarredRepo) => (
                 <li
                   style={{
                     marginBottom: '1rem',
@@ -125,6 +143,13 @@ const RepositoryList: React.FC = () => {
                 </li>
               ))}
             </ul>
+            <Stack spacing={2} sx={{ margin: '1rem 0' }}>
+              <Pagination
+                count={lastPage}
+                page={page}
+                onChange={handlePageChange}
+              />
+            </Stack>
           </>
         )
       }
